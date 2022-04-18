@@ -10,7 +10,7 @@ from django.contrib.auth.models import Group
 
 from accounts.models import *
 from .filters import OrderFilter
-from .forms import OrderForm, CreateUserForm
+from .forms import OrderForm, CreateUserForm, CustomerForm
 from .decorators import unauthenticated_user, allowed_users, admin_only
 
 # Create your views here.
@@ -23,6 +23,7 @@ def registerPage(request):
       user = form.save()
       group = Group.objects.get(name='customer')
       user.groups.add(group)
+      Customer.objects.create(user=user)
       
       messages.success(request, 'Register successfully')
       return redirect('login')
@@ -71,15 +72,32 @@ def home(request):
 def userPage(request):
   orders = request.user.customer.order_set.all()
 
-	total_orders = orders.count()
-	delivered = orders.filter(status='Delivered').count()
-	pending = orders.filter(status='Pending').count()
+  total_orders = orders.count()
+  delivered = orders.filter(status='Delivered').count()
+  pending = orders.filter(status='Pending').count()
   out_for_delivery = orders.filter(status='Out for delivery').count()
   
 
-	context = {'orders':orders, 'total_orders':total_orders,
-	'delivered':delivered,'pending':pending, 'out-for-delivery':out_for_delivery}
-	return render(request, 'accounts/user.html', context)
+  context = {'orders':orders, 'total_orders':total_orders,
+  'delivered':delivered,'pending':pending, 'out-for-delivery':out_for_delivery}
+  return render(request, 'accounts/user.html', context)
+
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['customer'])
+def accountSettings(request):
+	customer = request.user.customer
+	form = CustomerForm(instance=customer)
+
+	if request.method == 'POST':
+		form = CustomerForm(request.POST, request.FILES, instance=customer)
+		if form.is_valid():
+			form.save()
+
+
+	context = {'form':form}
+	return render(request, 'accounts/account_settings.html', context)
+
+
 @login_required(login_url='login')
 @allowed_users(allowed_roles=['admin'])
 def products(request):
