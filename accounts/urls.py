@@ -17,8 +17,8 @@ urlpatterns = [
   path('update_order/<str:orderID>/', views.updateOrder, name='update_order'),
   path('delete_order/<str:orderID>/', views.deleteOrder, name='delete_order'),
   
-  path('reset-password/', auth_views.PasswordResetView.as_view(), name='reset-password'),
-  path('reset-password-sent/', auth_views.PasswordResetDoneView.as_view(), name='password-reset-done'),
+  path('reset_password/', auth_views.PasswordResetView.as_view(), name='reset-password'),
+  path('reset_password_sent/', auth_views.PasswordResetDoneView.as_view(), name='password-reset-done'),
   path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(), name='password-reset-confirm'),
-  path('reset-password-complete/', auth_views.PasswordResetCompleteView.as_view(), name='password-reset-complete'),
+  path('reset_password_complete/', auth_views.PasswordResetCompleteView.as_view(), name='password-reset-complete'),
 ]
