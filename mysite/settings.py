@@ -40,6 +40,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'accounts', #import app's name
     'django_filters',
+    'storages',
+    'accounts.apps.AccountConfig',
 ]
 
 MIDDLEWARE = [
